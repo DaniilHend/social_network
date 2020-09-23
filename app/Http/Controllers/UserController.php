@@ -11,7 +11,7 @@ class UserController extends Controller {
         $UserModel = new Users();
 
         $UserModel->login = $data->input('login');
-        $UserModel->password_hash = $data->input('password');
+        $UserModel->password_hash = password_hash($data->input('password'), PASSWORD_BCRYPT);
 
         $UserModel->save();
 
