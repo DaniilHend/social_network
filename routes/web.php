@@ -8,6 +8,6 @@ Route::get('/', function () {
 
 Route::post('/submit', 'UserController@sign')->name('sign');
 
-Route::get('/profile', function () {
-    return view('welcome');
-})->name('profile');
+Route::get('/profile', 'ProfileController@me')->name('profile')->middleware('token');
+
+Route::get('/profile/{id}', 'ProfileController@stranger')->name('strange-profile');

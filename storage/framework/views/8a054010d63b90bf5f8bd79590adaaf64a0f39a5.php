@@ -1,6 +1,4 @@
-<?php $__env->startSection('title'); ?>
-    Вход/Регистрация
-<?php $__env->stopSection(); ?>
+<?php $__env->startSection('title'); ?>Вход/Регистрация<?php $__env->stopSection(); ?>
 <?php $__env->startSection('content'); ?>
 
 
@@ -12,10 +10,10 @@
     <label for="inputEmail" class="sr-only">Login</label>
     <input name="login" type="text" id="inputLogin" class="form-control" placeholder="Login">
     <label for="inputPassword" class="sr-only">Password</label>
-    <input name="password" type="password" id="inputPassword" class="form-control" placeholder="Password">
+    <input name="password" type="password" id="password" class="form-control" placeholder="Password">
     <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in/up</button>
     <?php if($errors->any()): ?>
-        <div class="alert alert-danger">
+        <div class="alert alert-danger mt-2">
             <ul>
                 <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <li><?php echo e($error); ?></li>

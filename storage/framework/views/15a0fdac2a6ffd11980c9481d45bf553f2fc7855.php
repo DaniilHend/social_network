@@ -1,10 +1,12 @@
  
  <?php $__env->startSection('title'); ?>Профиль<?php $__env->stopSection(); ?>
  <?php $__env->startSection('content'); ?>
-        <div class="flex-center position-ref full-height">
-            <div class="content">
-                <div class="title m-b-md">
-                    Профиль
+        <div class="align-self-baseline container">
+            <div class="row">
+                <div class="col h2 text-black-50">
+                    Профиль пользователя
+                    <?php echo e($name ?? ''); ?>
+
                 </div>
             </div>
         </div>
