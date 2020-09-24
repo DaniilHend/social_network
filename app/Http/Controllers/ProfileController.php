@@ -23,7 +23,7 @@ class ProfileController extends Controller
     public function me() {
         $user = Auth::user();
         $comments = Messages::all()->where('profile_id', Auth::id());
-        return view('profile')->with('name', $user->login)->with('comments', $comments->sortByDesc('id')->forPage(0, 5));
+        return view('profile')->with('login', true)->with('name', $user->login)->with('comments', $comments->sortByDesc('id')->forPage(0, 5));
     }
 
     public function createComment(MessageCreateRequest $data) {
@@ -38,12 +38,8 @@ class ProfileController extends Controller
 
     public function deleteComment(MessageDeleteRequest $data) {
         $comment = new Messages;
-        $comment->title = $data->input('title');
-        $comment->message = $data->input('message');
-        $comment->user_id = Auth::id();
-        $comment->profile_id = Auth::id();
-        $comment->save();
-        return redirect()->route('profile')->with('owner_id', Auth::id());
+        $comment->where('id', $data->commentId)->delete();
+        return redirect()->back();
     }
 
     public function allUsers() {
