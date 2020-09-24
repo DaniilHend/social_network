@@ -1,8 +1,5 @@
 <?php $__env->startSection('title'); ?>Вход/Регистрация<?php $__env->stopSection(); ?>
 <?php $__env->startSection('content'); ?>
-
-
-
 <form class="form-signin" action="<?php echo e(route('sign')); ?>" method="POST">
     <?php echo csrf_field(); ?>
 

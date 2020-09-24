@@ -1,9 +1,6 @@
 @extends('layouts.app')
 @section('title')Вход/Регистрация@endsection
 @section('content')
-{{--            <div class="title m-b-md">--}}
-{{--                Войдите или зарегистрируйтесь--}}
-{{--            </div>--}}
 <form class="form-signin" action="{{ route('sign') }}" method="POST">
     @csrf
 
