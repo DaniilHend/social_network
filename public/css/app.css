@@ -42,3 +42,7 @@ body {
   border-top-right-radius: 0;
 }
 
+.bg-owner {
+  background: rgba(181, 255, 248, 0.3);
+}
+
