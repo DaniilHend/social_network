@@ -12,10 +12,10 @@ Route::post('/comment/delete', 'ProfileController@deleteComment')->name('deleteC
 
 Route::get('/comments', 'ProfileController@allComments')->name('comments')->middleware('token');
 
-Route::get('/profile', 'ProfileController@me')->name('profile')->middleware('token');
+Route::get('/profile', 'ProfileController@myProfile')->name('profile')->middleware('token');
 
 Route::get('/profiles', 'ProfileController@allUsers')->name('profiles');
 
-Route::get('/profile/{id}', 'ProfileController@stranger')->name('strange-profile');
+Route::get('/profile/{id}', 'ProfileController@profile')->name('other-profile');
 
 
