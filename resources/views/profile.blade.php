@@ -1,8 +1,5 @@
 @extends('layouts.app')
 @section('title')Профиль@endsection
-@section('sidebar')
-
-@endsection
 @section('content')
     <div class="align-self-baseline container my-5">
         <div class="row">
@@ -33,7 +30,7 @@
                         </form>
                     </div>
                 @endif
-                <form action="{{ route('deleteComment') }}" method="POST">
+                <form action="{{ route('deleteComment') }}" method="POST" id="comments" class="text-left">
                     @if($sessionUserId)
                         @csrf
                         <div class="px-4 pb-4">
@@ -76,7 +73,27 @@
                         @endforeach
                     @endif
                 </form>
+                <button type="button" id="loadComments" data-loading-text="Loading..." class="btn btn-outline-info m-4" onclick="getMessage()">Все комментарии...</button>
             </div>
         </div>
     </div>
+    <script src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script>
+        function getMessage(){
+            var data = {};
+            data['userId'] = <?php echo $userId ?>;
+            data['_token'] = $('meta[name="csrf-token"]').attr('content');
+            $.ajax({
+                type:'POST',
+                url:'/ajax/comments',
+                data: data,
+                success:function(data) {
+                    $('#comments').append(data);
+                },
+                error: function(result){
+                    console.log(result);
+                }
+            });
+        };
+    </script>
 @endsection

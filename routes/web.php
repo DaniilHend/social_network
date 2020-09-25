@@ -18,4 +18,6 @@ Route::get('/profiles', 'ProfileController@allUsers')->name('profiles');
 
 Route::get('/profile/{id}', 'ProfileController@profile')->name('other-profile');
 
+Route::post('/ajax/comments', 'ProfileController@comments');
+
 

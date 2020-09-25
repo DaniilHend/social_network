@@ -4,11 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\MessageCreateRequest;
 use App\Http\Requests\MessageDeleteRequest;
-use App\Http\Requests\ProfileRequest;
 use App\Models\Messages;
 use App\Models\Users;
 use Illuminate\Http\Request;
-use App\Models\Profile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -27,13 +25,6 @@ class ProfileController extends Controller
         $comments = Messages::all()->where('profile_id', $userId)->sortByDesc('id')->forPage(0, 5);
 
         return view('profile')->with('name', $userName)->with('userId', $userId)->with('sessionUserId', $sessionUserId)->with('comments', $comments);
-    }
-
-    public function me() {
-        $user = Auth::user();
-        $comments = Messages::all()->where('profile_id', Auth::id());
-
-        return view('profile')->with('login', true)->with('name', $user->login)->with('comments', $comments->sortByDesc('id')->forPage(0, 5));
     }
 
     public function myProfile() {
@@ -81,5 +72,11 @@ class ProfileController extends Controller
         $comments = Messages::all()->where('user_id', Auth::id());
 
         return view('list')->with('comments', $comments->sortByDesc('id'));
+    }
+
+    public function comments(Request $request) {
+            $comments = Messages::all()->where('profile_id', $request->userId)->sortByDesc('id')->skip( 5);
+
+            return view('includes.message', ['comments' => $comments, 'userId' => $request->userId, 'sessionUserId' => Auth::id()]);
     }
 }

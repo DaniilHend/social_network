@@ -1,7 +1,4 @@
 <?php $__env->startSection('title'); ?>Профиль<?php $__env->stopSection(); ?>
-<?php $__env->startSection('sidebar'); ?>
-
-<?php $__env->stopSection(); ?>
 <?php $__env->startSection('content'); ?>
     <div class="align-self-baseline container my-5">
         <div class="row">
@@ -33,7 +30,7 @@
                         </form>
                     </div>
                 <?php endif; ?>
-                <form action="<?php echo e(route('deleteComment')); ?>" method="POST">
+                <form action="<?php echo e(route('deleteComment')); ?>" method="POST" id="comments" class="text-left">
                     <?php if($sessionUserId): ?>
                         <?php echo csrf_field(); ?>
                         <div class="px-4 pb-4">
@@ -76,9 +73,29 @@
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     <?php endif; ?>
                 </form>
+                <button type="button" id="loadComments" data-loading-text="Loading..." class="btn btn-outline-info m-4" onclick="getMessage()">Все комментарии...</button>
             </div>
         </div>
     </div>
+    <script src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script>
+        function getMessage(){
+            var data = {};
+            data['userId'] = <?php echo $userId ?>;
+            data['_token'] = $('meta[name="csrf-token"]').attr('content');
+            $.ajax({
+                type:'POST',
+                url:'/ajax/comments',
+                data: data,
+                success:function(data) {
+                    $('#comments').append(data);
+                },
+                error: function(result){
+                    console.log(result);
+                }
+            });
+        };
+    </script>
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\OpenServer\OSPanel\domains\php\resources\views/profile.blade.php ENDPATH**/ ?>
