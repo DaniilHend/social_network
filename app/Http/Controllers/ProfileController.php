@@ -17,12 +17,15 @@ class ProfileController extends Controller
             return redirect()->route('profile');
         }
         $user = Users::all()->where('id', $data)->first();
+        if (! $user) {
+            return redirect()->route('form');
+        }
         $userId = $user->id;
         $userName = $user->login;
         if (Auth::id()) {
             $sessionUserId = Auth::id();
         }
-        $comments = Messages::all()->where('profile_id', $userId)->sortByDesc('id')->forPage(0, 5);
+        $comments = Messages::all()->where('profile_id', $userId)->where('user_id', '<>', 0)->sortByDesc('id')->forPage(0, 5);
 
         return view('profile')->with('name', $userName)->with('userId', $userId)->with('sessionUserId', $sessionUserId)->with('comments', $comments);
     }
@@ -31,7 +34,7 @@ class ProfileController extends Controller
         $userId = Auth::id(); //userId - id профиля пользователя
         $userName = Auth::user()->login; //userName - login профиля пользователя
         $sessionUserId = Auth::id(); //sessionUserId - id человека, который просматривает профиль
-        $comments = Messages::all()->where('profile_id', $userId)->sortByDesc('id')->forPage(0, 5);
+        $comments = Messages::all()->where('profile_id', $userId)->where('user_id', '<>', 0)->sortByDesc('id')->forPage(0, 5);
 
         return view('profile')->with('name', $userName)->with('userId', $userId)->with('sessionUserId', $sessionUserId)->with('comments', $comments);
     }
@@ -42,18 +45,22 @@ class ProfileController extends Controller
         $comment->message = $data->input('message');
         $comment->user_id = Auth::id();
         $comment->profile_id = $data->input('profile_id');
+        $comment->message_id = $data->input('commentId');
+        if ($data->input('commentId')) {
+            $comment->message_id = $data->input('commentId');
+        }
         $comment->save();
 
         return redirect()->back();
     }
 
     public function deleteComment(MessageDeleteRequest $data) {
-        if (is_array($data->commentId)) {
-            foreach ($data->commentId as $commentId) {
-                DB::table('messages')->where('id', $commentId)->delete();
-            }
+        $checking = Messages::all()->where('message_id', $data->commentId)->where('message_id', !null);
+
+        if (! $checking->isEmpty()) {
+            Messages::first()->where('id', $data->commentId)->update(['user_id' => 0, 'title' => 'Сообщение удалено', 'message' => 'Сообщение удалено']);
         } else {
-            DB::table('messages')->where('id', $data->commentId)->delete();
+            Messages::first()->where('id', $data->commentId)->delete();
         }
 
         return redirect()->back();
@@ -66,9 +73,6 @@ class ProfileController extends Controller
     }
 
     public function allComments() {
-        if (Auth::check() !== true) {
-            return redirect()->route('form');
-        }
         $comments = Messages::all()->where('user_id', Auth::id());
 
         return view('list')->with('comments', $comments->sortByDesc('id'));
