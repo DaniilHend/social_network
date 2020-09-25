@@ -24,19 +24,23 @@ class ProfileController extends Controller
         $userName = $user->login;
         if (Auth::id()) {
             $sessionUserId = Auth::id();
+        } else {
+            $sessionUserId = null;
         }
-        $comments = Messages::all()->where('profile_id', $userId)->where('user_id', '<>', 0)->sortByDesc('id')->forPage(0, 5);
+        $comments = Messages::all()->where('profile_id', $userId)->where('message_id', null)->sortByDesc('id')->forPage(0, 5);
+        $responces = Messages::all()->where('message_id', !null)->sortByDesc('id');
 
-        return view('profile')->with('name', $userName)->with('userId', $userId)->with('sessionUserId', $sessionUserId)->with('comments', $comments);
+        return view('profile')->with('name', $userName)->with('userId', $userId)->with('sessionUserId', $sessionUserId)->with('comments', $comments)->with('responses', $responces);
     }
 
     public function myProfile() {
         $userId = Auth::id(); //userId - id профиля пользователя
         $userName = Auth::user()->login; //userName - login профиля пользователя
         $sessionUserId = Auth::id(); //sessionUserId - id человека, который просматривает профиль
-        $comments = Messages::all()->where('profile_id', $userId)->where('user_id', '<>', 0)->sortByDesc('id')->forPage(0, 5);
+        $comments = Messages::all()->where('profile_id', $userId)->where('message_id', null)->sortByDesc('id')->forPage(0, 5);
+        $responces = Messages::all()->where('message_id', !null)->sortByDesc('id');
 
-        return view('profile')->with('name', $userName)->with('userId', $userId)->with('sessionUserId', $sessionUserId)->with('comments', $comments);
+        return view('profile')->with('name', $userName)->with('userId', $userId)->with('sessionUserId', $sessionUserId)->with('comments', $comments)->with('responses', $responces);
     }
 
     public function createComment(MessageCreateRequest $data) {
@@ -79,7 +83,8 @@ class ProfileController extends Controller
     }
 
     public function comments(Request $request) {
-            $comments = Messages::all()->where('profile_id', $request->userId)->sortByDesc('id')->skip( 5);
+            $comments = Messages::all()->where('profile_id', $request->userId)->where('message_id', null)->sortByDesc('id')->skip( 5);
+            $comments = Messages::all()->where('profile_id', $request->userId)->where('message_id', null)->sortByDesc('id');
 
             return view('includes.message', ['comments' => $comments, 'userId' => $request->userId, 'sessionUserId' => Auth::id()]);
     }
