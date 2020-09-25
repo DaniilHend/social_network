@@ -83,9 +83,11 @@ class ProfileController extends Controller
     }
 
     public function comments(Request $request) {
-            $comments = Messages::all()->where('profile_id', $request->userId)->where('message_id', null)->sortByDesc('id')->skip( 5);
-            $comments = Messages::all()->where('profile_id', $request->userId)->where('message_id', null)->sortByDesc('id');
+        if ($request->flag) {
+            $comments = Messages::all()->where('profile_id', $request->userId)->where('message_id', null)->sortByDesc('id')->skip(5);
+            $responces = Messages::all()->where('message_id', !null)->sortByDesc('id');
 
-            return view('includes.message', ['comments' => $comments, 'userId' => $request->userId, 'sessionUserId' => Auth::id()]);
+            return view('includes.message', ['comments' => $comments, 'userId' => $request->userId, 'sessionUserId' => Auth::id(), 'responses' => $responces]);
+        }
     }
 }

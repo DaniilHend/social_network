@@ -163,17 +163,45 @@
                                                     <span class="text-black-50">{{ $response->user_id }}</span>
                                                 </p>
                                                 <div class="align-self-start">{{ $response->message }}</div>
+                                                @if($response->user_id == $sessionUserId && $sessionUserId)
+                                                    <br>
+                                                    <form action="{{ route('deleteComment') }}" method="POST"
+                                                          class="text-left">
+                                                        @csrf
+                                                        <input type="number" class="d-none" name="commentId"
+                                                               id="task{{ $response->id }}"
+                                                               value="{{ $response->id }}">
+                                                        <button name="delete" class="btn btn-danger btn-block" type="submit">Удалить
+                                                        </button>
+                                                    </form>
+                                                @endif
                                             </div>
                                         @endif
                                     @endforeach
+                                    @if($sessionUserId)
+                                        <form action="{{ route('createComment') }}" method="POST" class="mt-4">
+                                            @csrf
+                                            <input type="number" class="d-none" name="commentId"
+                                                   id="task{{ $message->id }}"
+                                                   value="{{ $message->id }}">
+                                            <input name="profile_id" type="number" class="d-none" value="{{ $userId }}">
+                                            <input name="title" type="text" class="form-control mb-2"
+                                                   placeholder="Заголовок комментария">
+                                            <textarea name="message" class="form-control mb-2"
+                                                      placeholder="Текст комментария"></textarea>
+                                            <button name="send" class="btn btn-primary btn-block mb-2" type="submit">
+                                                Ответить
+                                            </button>
+                                        </form>
+                                    @endif
                                 </div>
                             @endif
                         @endforeach
                     @endif
                 </div>
-                <button type="button" id="loadComments" data-loading-text="Loading..." class="btn btn-outline-info m-4"
-                        onclick="getMessage()">Все комментарии...
-                </button>
+                    <button type="button" id="loadComments" data-loading-text="Loading..." class="btn btn-outline-info m-4"
+                            onclick="getMessage()">Все комментарии...
+                    </button>
             </div>
         </div>
     </div>
@@ -183,10 +211,14 @@
             var data = {};
             data['userId'] = <?php echo $userId ?>;
             data['_token'] = $('meta[name="csrf-token"]').attr('content');
+            data['flag'] = false;
             $.ajax({
                 type: 'POST',
                 url: '/ajax/comments',
                 data: data,
+                beforeSend: function() {
+                    $('#loadComments').replaceWith('');
+                },
                 success: function (data) {
                     $('#comments').append(data);
                 },

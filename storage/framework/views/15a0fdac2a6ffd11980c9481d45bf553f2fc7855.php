@@ -163,17 +163,45 @@
                                                     <span class="text-black-50"><?php echo e($response->user_id); ?></span>
                                                 </p>
                                                 <div class="align-self-start"><?php echo e($response->message); ?></div>
+                                                <?php if($response->user_id == $sessionUserId && $sessionUserId): ?>
+                                                    <br>
+                                                    <form action="<?php echo e(route('deleteComment')); ?>" method="POST"
+                                                          class="text-left">
+                                                        <?php echo csrf_field(); ?>
+                                                        <input type="number" class="d-none" name="commentId"
+                                                               id="task<?php echo e($response->id); ?>"
+                                                               value="<?php echo e($response->id); ?>">
+                                                        <button name="delete" class="btn btn-danger btn-block" type="submit">Удалить
+                                                        </button>
+                                                    </form>
+                                                <?php endif; ?>
                                             </div>
                                         <?php endif; ?>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    <?php if($sessionUserId): ?>
+                                        <form action="<?php echo e(route('createComment')); ?>" method="POST" class="mt-4">
+                                            <?php echo csrf_field(); ?>
+                                            <input type="number" class="d-none" name="commentId"
+                                                   id="task<?php echo e($message->id); ?>"
+                                                   value="<?php echo e($message->id); ?>">
+                                            <input name="profile_id" type="number" class="d-none" value="<?php echo e($userId); ?>">
+                                            <input name="title" type="text" class="form-control mb-2"
+                                                   placeholder="Заголовок комментария">
+                                            <textarea name="message" class="form-control mb-2"
+                                                      placeholder="Текст комментария"></textarea>
+                                            <button name="send" class="btn btn-primary btn-block mb-2" type="submit">
+                                                Ответить
+                                            </button>
+                                        </form>
+                                    <?php endif; ?>
                                 </div>
                             <?php endif; ?>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     <?php endif; ?>
                 </div>
-                <button type="button" id="loadComments" data-loading-text="Loading..." class="btn btn-outline-info m-4"
-                        onclick="getMessage()">Все комментарии...
-                </button>
+                    <button type="button" id="loadComments" data-loading-text="Loading..." class="btn btn-outline-info m-4"
+                            onclick="getMessage()">Все комментарии...
+                    </button>
             </div>
         </div>
     </div>
@@ -183,10 +211,14 @@
             var data = {};
             data['userId'] = <?php echo $userId ?>;
             data['_token'] = $('meta[name="csrf-token"]').attr('content');
+            data['flag'] = false;
             $.ajax({
                 type: 'POST',
                 url: '/ajax/comments',
                 data: data,
+                beforeSend: function() {
+                    $('#loadComments').replaceWith('');
+                },
                 success: function (data) {
                     $('#comments').append(data);
                 },
