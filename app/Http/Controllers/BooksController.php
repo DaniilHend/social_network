@@ -11,6 +11,7 @@ use App\Models\Users;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use phpDocumentor\Reflection\Types\Collection;
 
 class BooksController extends Controller
 {
@@ -75,24 +76,21 @@ class BooksController extends Controller
             return view('includes.library')->with('userId', Auth::id())->with('books', $books)->with('mine', true);
         } else {
             $access = AccessBooks::all()->where('user_id', Auth::id());
+            $books = \Illuminate\Database\Eloquent\Collection::make();
             foreach ($access as $accessOne) {
-                if ($accessOne->book_id != null) {
-                    $book = Books::all()->where('id', $accessOne->book_id);
 
-                    return view('includes.library')->with('userId', Auth::id())->with('books', $book)->with('mine', false);
+                if ($accessOne->book_id != null) {
+                    $book = Books::all()->where('id', $accessOne->book_id)->first();
+                    $books->put($book->id, $book);
                 }
                 if ($accessOne->profile_id != null) {
-                    $books = Books::all()->where('profile_id', $accessOne->profile_id);
-
-                    return view('includes.book')->with('userId', Auth::id())->with('books', $books)->with('mine', false);
+                    $booklibrary = Books::all()->where('profile_id', $accessOne->profile_id);
+                    foreach ($booklibrary as $book) {
+                        $books->put($book->id, $book);
+                    }
                 }
             }
-
-
-
-            //$book = Books::all()->where('id', $access->book_id);
-
-            //array_push($books, );
+            return view('includes.book')->with('userId', Auth::id())->with('books', $books->values())->with('mine', false);
         }
     }
 

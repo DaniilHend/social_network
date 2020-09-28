@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title')Профиль@endsection
+@section('title') Профиль @endsection
 @section('content')
     <div class="align-self-baseline container mt-5">
         <div class="row">
@@ -76,6 +76,9 @@
                     console.log(data['count']);
                 },
                 success: function (data) {
+                    if (data['count'] % 2 == 1) {
+
+                    }
                     $('#content').html(data);
                 },
                 error: function (result) {

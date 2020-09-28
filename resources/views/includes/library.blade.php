@@ -9,7 +9,7 @@
     @if($mine == true)
         <form action="{{ route('createBook') }}" method="POST">
             @csrf
-            <input name="profile_id" type="number" class="d-none" value="{{ $userId }}">
+            <input name="profile_id" ty pe="number" class="d-none" value="{{ $userId }}">
             <input name="title" type="text" class="form-control mb-2"
                    placeholder="Заголовок книги">
             <textarea name="text" class="form-control mb-2"
