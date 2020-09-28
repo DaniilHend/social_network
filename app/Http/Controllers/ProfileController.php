@@ -90,4 +90,9 @@ class ProfileController extends Controller
             return view('includes.message', ['comments' => $comments, 'userId' => $request->userId, 'sessionUserId' => Auth::id(), 'responses' => $responces]);
         }
     }
+
+    public function profileExit() {
+        Auth::logout();
+        return redirect()->route('form');
+    }
 }

@@ -8,6 +8,10 @@
                     Профиль пользователя
                     {{ $name }}
                 </div>
+                @if($userId == $sessionUserId)
+                    <a class="my-2 mx-4 d-flex" href="/exit"><button class="btn btn-dark flex-grow-1">Выйти</button></a>
+                    <a class="my-2 mx-4 d-flex" href="/library"><button class="btn btn-dark flex-grow-1">Библиотека</button></a>
+                @endif
                 @if($errors->any())
                     <div class="alert alert-danger mt-2 mx-4 text-left">
                         <ul>
