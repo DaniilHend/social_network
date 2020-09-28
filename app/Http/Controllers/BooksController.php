@@ -31,18 +31,11 @@ class BooksController extends Controller
     }
 
     public function readBook($data) {
-        if (is_int($data) == true) {
-            $book = Books::all()->where('id', $data)->first();
-        } else {
+        $book = Books::all()->where('id', $data)->first();
+        if (!$book) {
             $book = Books::all()->where('token', $data)->first();
-            if (Auth::check()) {
-                $check = AccessBooks::all()->where('id', 2);
-                dd($check);
-                if (!$check) {
-
-                    $access->profile_id = Auth::id();
-                    $access->book_id = $book->id;
-                }
+            if (!$book) {
+                abort(404);
             }
         }
 
@@ -81,22 +74,38 @@ class BooksController extends Controller
 
             return view('includes.library')->with('userId', Auth::id())->with('books', $books)->with('mine', true);
         } else {
-            $access = AccessBooks::all()->where('id', Auth::id());
+            $access = AccessBooks::all()->where('user_id', Auth::id());
             foreach ($access as $accessOne) {
                 if ($accessOne->book_id != null) {
                     $book = Books::all()->where('id', $accessOne->book_id);
 
                     return view('includes.library')->with('userId', Auth::id())->with('books', $book)->with('mine', false);
                 }
+                if ($accessOne->profile_id != null) {
+                    $books = Books::all()->where('profile_id', $accessOne->profile_id);
+
+                    return view('includes.book')->with('userId', Auth::id())->with('books', $books)->with('mine', false);
+                }
             }
+
 
 
             //$book = Books::all()->where('id', $access->book_id);
 
             //array_push($books, );
-
-
         }
+    }
 
+    public function giveAccess($data) {
+        $check = AccessBooks::all()->where('user_id', $data)->where('profile_id', Auth::id())->first();
+        if (!$check) {
+            $access = new AccessBooks;
+            $access->profile_id = Auth::id();
+            $access->user_id = $data;
+            $access->save();
+        } else {
+            AccessBooks::first()->where('user_id', $data)->where('profile_id', Auth::id())->delete();
+        }
+        return redirect()->back();
     }
 }

@@ -24,6 +24,8 @@ Route::post('/ajax/library', 'BooksController@getLibrary')->middleware('auth');
 
 Route::get('/exit', 'ProfileController@profileExit')->middleware('auth');
 
+Route::post('/profile/{id}/access', 'BooksController@giveAccess')->name('giveAccess')->middleware('auth');
+
 Route::get('/library', 'BooksController@library')->name('library')->middleware('auth');
 
 Route::post('/book/add', 'BooksController@createBook')->name('createBook')->middleware('auth');
@@ -34,6 +36,6 @@ Route::post('/book/delete', 'BooksController@deleteBook')->name('deleteBook')->m
 
 Route::get('/book/edit/{id}', 'BooksController@editBook')->name('editBook')->middleware('auth');
 
-Route::get('/book/{id}', 'BooksController@readBook')->name('book')->middleware('AccessBooks');
+Route::get('/book/{id}', 'BooksController@readBook')->name('book')->middleware('token');
 
 Route::get('/book/share/{id}', 'BooksController@shareBook')->name('shareBook')->middleware('auth');

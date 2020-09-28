@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title')Профиль@endsection
+@section('title') Профиль @endsection
 @section('content')
     <div class="align-self-baseline container my-5">
         <div class="row">

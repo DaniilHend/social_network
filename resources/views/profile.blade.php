@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title')Профиль@endsection
+@section('title') Профиль @endsection
 @section('content')
     <div class="align-self-baseline container my-5">
         <div class="row">
@@ -9,8 +9,12 @@
                     {{ $name }}
                 </div>
                 @if($userId == $sessionUserId)
-                    <a class="my-2 mx-4 d-flex" href="/exit"><button class="btn btn-dark flex-grow-1">Выйти</button></a>
-                    <a class="my-2 mx-4 d-flex" href="/library"><button class="btn btn-dark flex-grow-1">Библиотека</button></a>
+                    <a class="my-2 mx-4 d-flex" href="/exit">
+                        <button class="btn btn-dark flex-grow-1">Выйти</button>
+                    </a>
+                    <a class="my-2 mx-4 d-flex" href="/library">
+                        <button class="btn btn-dark flex-grow-1">Библиотека</button>
+                    </a>
                 @endif
                 @if($errors->any())
                     <div class="alert alert-danger mt-2 mx-4 text-left">
@@ -23,6 +27,17 @@
                 @endif
                 @if($sessionUserId)
                     <div class="px-4 pt-4">
+                        @if($userId != $sessionUserId)
+                            <form action="{{ route('giveAccess', $userId) }}" method="POST">
+                                @csrf
+                                <input type="number" class="d-none" value="{{ $userId }}">
+                                <button name="access" class="btn btn-primary btn-block mb-2" type="submit">
+                                    @if($access != null)
+                                        {{ $accessText }}
+                                    @endif
+                                </button>
+                            </form>
+                        @endif
                         <form action="{{ route('createComment') }}" method="POST">
                             @csrf
                             <input name="profile_id" type="number" class="d-none" value="{{ $userId }}">
@@ -70,7 +85,8 @@
                                                         <input type="number" class="d-none" name="commentId"
                                                                id="task{{ $response->id }}"
                                                                value="{{ $response->id }}">
-                                                        <button name="delete" class="btn btn-danger btn-block" type="submit">Удалить
+                                                        <button name="delete" class="btn btn-danger btn-block"
+                                                                type="submit">Удалить
                                                         </button>
                                                     </form>
                                                 </div>
@@ -127,7 +143,8 @@
                                                             <input type="number" class="d-none" name="commentId"
                                                                    id="task{{ $response->id }}"
                                                                    value="{{ $response->id }}">
-                                                            <button name="delete" class="btn btn-danger btn-block" type="submit">Удалить
+                                                            <button name="delete" class="btn btn-danger btn-block"
+                                                                    type="submit">Удалить
                                                             </button>
                                                         </form>
                                                     @endif
@@ -175,7 +192,8 @@
                                                         <input type="number" class="d-none" name="commentId"
                                                                id="task{{ $response->id }}"
                                                                value="{{ $response->id }}">
-                                                        <button name="delete" class="btn btn-danger btn-block" type="submit">Удалить
+                                                        <button name="delete" class="btn btn-danger btn-block"
+                                                                type="submit">Удалить
                                                         </button>
                                                     </form>
                                                 @endif
@@ -203,9 +221,9 @@
                         @endforeach
                     @endif
                 </div>
-                    <button type="button" id="loadComments" data-loading-text="Loading..." class="btn btn-outline-info m-4"
-                            onclick="getMessage()">Все комментарии...
-                    </button>
+                <button type="button" id="loadComments" data-loading-text="Loading..." class="btn btn-outline-info m-4"
+                        onclick="getMessage()">Все комментарии...
+                </button>
             </div>
         </div>
     </div>
@@ -220,7 +238,7 @@
                 type: 'POST',
                 url: '/ajax/comments',
                 data: data,
-                beforeSend: function() {
+                beforeSend: function () {
                     $('#loadComments').replaceWith('');
                 },
                 success: function (data) {

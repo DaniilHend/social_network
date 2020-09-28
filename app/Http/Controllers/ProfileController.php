@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\MessageCreateRequest;
 use App\Http\Requests\MessageDeleteRequest;
+use App\Models\AccessBooks;
 use App\Models\Messages;
 use App\Models\Users;
 use Illuminate\Http\Request;
@@ -23,24 +24,33 @@ class ProfileController extends Controller
         $userId = $user->id;
         $userName = $user->login;
         if (Auth::id()) {
+            $access = AccessBooks::all()->where('profile_id', Auth::id())->where('user_id', $data);
+            if ($access->isEmpty()) {
+                $accessText = 'Дать доступ.';
+            } else {
+                $accessText = 'Забрать доступ.';
+            }
             $sessionUserId = Auth::id();
         } else {
+            $access = null;
             $sessionUserId = null;
         }
         $comments = Messages::all()->where('profile_id', $userId)->where('message_id', null)->sortByDesc('id')->forPage(0, 5);
         $responces = Messages::all()->where('message_id', !null)->sortByDesc('id');
 
-        return view('profile')->with('name', $userName)->with('userId', $userId)->with('sessionUserId', $sessionUserId)->with('comments', $comments)->with('responses', $responces);
+
+        return view('profile')->with('accessText', $accessText)->with('access', $access)->with('name', $userName)->with('userId', $userId)->with('sessionUserId', $sessionUserId)->with('comments', $comments)->with('responses', $responces);
     }
 
     public function myProfile() {
         $userId = Auth::id(); //userId - id профиля пользователя
         $userName = Auth::user()->login; //userName - login профиля пользователя
         $sessionUserId = Auth::id(); //sessionUserId - id человека, который просматривает профиль
+        $access = null;
         $comments = Messages::all()->where('profile_id', $userId)->where('message_id', null)->sortByDesc('id')->forPage(0, 5);
         $responces = Messages::all()->where('message_id', !null)->sortByDesc('id');
 
-        return view('profile')->with('name', $userName)->with('userId', $userId)->with('sessionUserId', $sessionUserId)->with('comments', $comments)->with('responses', $responces);
+        return view('profile')->with('access', $access)->with('name', $userName)->with('userId', $userId)->with('sessionUserId', $sessionUserId)->with('comments', $comments)->with('responses', $responces);
     }
 
     public function createComment(MessageCreateRequest $data) {
